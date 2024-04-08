@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Charging Station Status</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f3f3f3;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        .status {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .status p {
+            margin: 10px 0;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EV Charging Station Status For Registered Users</h1>
+        <div class="status">
+            <p><strong>Balance Amount Left:</strong> $50.00</p>
+            <p><strong>Unit of Electricity Consumed:</strong> 30 kWh</p>
+            <p><strong>Time of Charging:</strong> 2 hours 15 minutes</p>
+        </div>
+        <button class="button" id="stopButton" onclick="logout()" style="background-color: red;">Stop Charging</button>
+        <button class="button" id="stopButton" onclick="home()">Home</button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const port = urlParams.get('port');
+        console.log(port); 
+        document.getElementById("stopButton").addEventListener("click", function() {
+            // You can add your logic here to stop charging
+            alert("Charging stopped!");
+        });
+
+        function logout() {
+            var apiUrl = 'http://192.168.29.80:8080/logout_terminal?port='+port
+            console.log(apiUrl)
+            fetch(apiUrl).then(response => {
+            return response.json();
+            }).then(data => {
+            // Work with JSON data here
+            // console.log(portstat)
+            }).catch(err => {
+            // Do something for an error here
+            });
+            window.location.href = "/";
+        }
+
+        function home() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

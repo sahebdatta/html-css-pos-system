@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV Charging Station Numpad</title>
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+        /* background-color: #000000; */
+    }
+
+    .container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 40px);
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    #numpad {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    #numpad button {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        font-size: 20px;
+        border: none;
+        background-color: #6495ED;
+        color: #fff;
+        border-radius: 20%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #numpad button:hover {
+        background-color: #4169E1;
+    }
+
+    #numpadrfid {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    #numpadrfid button {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        font-size: 20px;
+        border: none;
+        background-color: #6495ED;
+        color: #fff;
+        border-radius: 20%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #numpadrfid button:hover {
+        background-color: #4169E1;
+    }
+
+    .image-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button[type="pay"] {
+        background-color: #32CD32;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="pay"]:hover {
+        background-color: #228B22;
+    }
+
+    button[type="pay"]:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container" id = "default">
+    <!-- <header>
+        <h1>EV Charging Station Numpad</h1>
+    </header> -->
+    <!-- <form> -->
+        <h2>User Login</h2>
+        <h3>Continue with mobile number or tap RFID card</h3>
+        <div id="mobileno" style="display: block;">+91 - <input type="text" id="textField" placeholder="Enter your 10 digit mobile number" onclick="toggleNumpad('numpad')" style="width: 70%;"></div>
+        <!-- <input type="text" id="textField" placeholder="Enter your pin to start charging"> -->
+        <div class="qr" id="qr">
+            <!-- <img src="https://via.placeholder.com/300" alt="EV Charging Station" width="300" height="200"> -->
+        </div>
+        <div id="numpad">
+            <button onclick="appendToInput('1','textField')">1</button>
+            <button onclick="appendToInput('2','textField')">2</button>
+            <button onclick="appendToInput('3','textField')">3</button>
+            <br>
+            <button onclick="appendToInput('4','textField')">4</button>
+            <button onclick="appendToInput('5','textField')">5</button>
+            <button onclick="appendToInput('6','textField')">6</button>
+            <br>
+            <button onclick="appendToInput('7','textField')">7</button>
+            <button onclick="appendToInput('8','textField')">8</button>
+            <button onclick="appendToInput('9','textField')">9</button>
+            <br>
+            <button style="visibility:hidden;">_</button> <!-- Placeholder for spacing -->
+            <button onclick="appendToInput('0','textField')">0</button>
+            <button onclick="removeLast('textField')">←</button>
+            <br>
+        </div>
+        <br>
+        <button type="pay" id="paybtn" onclick="request()">Send OTP</button>
+    <!-- </form> -->
+</div>
+
+<div class="container" id="rfid" style="display: none;">
+    <!-- <header>
+        <h1>EV Charging Station Numpad</h1>
+    </header> -->
+    <!-- <form> -->
+        <h2>User Login</h2>
+        <h3>RFID card detected</h3>
+        <input type="text" id="textFieldrfid" placeholder="Enter your 4 digit pin" onclick="toggleNumpad('numpadrfid')" style="width: 50%;">
+        <div id="numpadrfid">
+            <button onclick="appendToInput('1','textFieldrfid')">1</button>
+            <button onclick="appendToInput('2','textFieldrfid')">2</button>
+            <button onclick="appendToInput('3','textFieldrfid')">3</button>
+            <br>
+            <button onclick="appendToInput('4','textFieldrfid')">4</button>
+            <button onclick="appendToInput('5','textFieldrfid')">5</button>
+            <button onclick="appendToInput('6','textFieldrfid')">6</button>
+            <br>
+            <button onclick="appendToInput('7','textFieldrfid')">7</button>
+            <button onclick="appendToInput('8','textFieldrfid')">8</button>
+            <button onclick="appendToInput('9','textFieldrfid')">9</button>
+            <br>
+            <button style="visibility:hidden;">_</button> <!-- Placeholder for spacing -->
+            <button onclick="appendToInput('0','textFieldrfid')">0</button>
+            <button onclick="removeLast('textFieldrfid')">←</button>
+            <br>
+        </div>
+        <br>
+        <button type="pay" id="paybtn" onclick="handleRfid()">Submit</button>
+    <!-- </form> -->
+</div>
+
+<script>
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const port = urlParams.get('port');
+    console.log(port); 
+
+    var pin, rfidtag
+
+    // Create WebSocket connection.
+    const socket = new WebSocket("ws://192.168.29.80:8080/ws");
+
+    // Connection opened
+    socket.addEventListener("open", (event) => {
+        socket.send("Hello Server!");
+    });
+
+    // Listen for messages
+    socket.addEventListener("message", (event) => {
+        var response = JSON.parse(event.data)
+        console.log(response)
+        if (response["type"] == 1) {
+            return
+        }
+
+        if (response["heartbeat"]["rfid"] != "") {
+            pin = response["heartbeat"]["pin"]
+            rfidtag = response["heartbeat"]["rfid"]
+            // var payload = JSON.parse(response["heartbeat"])
+            console.log("Message ", response["heartbeat"], pin, rfidtag);
+
+            var defaultdiv = document.getElementById("default");
+            defaultdiv.style.display = 'none'
+            var rfiddiv = document.getElementById("rfid");
+            rfiddiv.style.display = 'block'
+        }
+    });
+
+    function handleRfid() {
+        var pininput = document.getElementById("textFieldrfid")
+        if (pininput.value == pin.toString()) {
+            console.log("Autheticated!")
+            // updateport()
+            window.location.href='user.html?port='+port+'&rfid='+rfidtag
+        }
+        else {
+            alert("Invalid credentials!")
+        }
+    }
+
+    // function updateport() {
+    //     var apiUrl = 'http://192.168.29.80:8080/update_terminal?port='+port+'&usertype=registered&rfid='+rfidtag
+    //     console.log(apiUrl)
+    //     fetch(apiUrl).then(response => {
+    //     return response.json();
+    //     }).then(data => {
+    //     // Work with JSON data here
+    //     // console.log(portstat)
+    //     }).catch(err => {
+    //     // Do something for an error here
+    //     });
+    // }
+
+    function request() {
+        var numpad = document.getElementById("numpad");
+        numpad.style.display = "none"
+        var textBox = document.getElementById("textField");
+        number = textBox.value
+        var apiUrl = 'http://192.168.29.80:8080/mobile_login?port='+port+'&number='+number
+        console.log(apiUrl)
+        fetch(apiUrl).then(response => {
+        return response.json();
+        }).then(data => {
+        // Work with JSON data here
+        // console.log(portstat)
+        }).catch(err => {
+        // Do something for an error here
+        });
+    }
+
+    // Function to submit the form
+    function sendotp() {
+        // Your submit logic here
+        // alert("Form submitted!");
+        var textBox = document.getElementById("textInput1");
+        number = textBox.value
+        console.log(number.length)
+        if (number.length != 10) {
+            alert("Invalid input!");
+            textBox.value = ""
+            return
+        }
+        var otp = Math.floor(Math.random() * 1000) + 1111;
+        OTP_Global = otp
+        var apiUrl = 'https://www.fast2sms.com/dev/bulkV2?authorization=V0Rdmy45OFHivWPIYazZ8xQNo21EJMlTSpKtLrnbqueX7wgfDsQeXctPdF6zKN5VR3b1viDLlxCEjUur&variables_values='+otp+'&route=otp&numbers='+number;
+        fetch(apiUrl).then(response => {
+        return response.json();
+        }).then(data => {
+            mobileno.style.display = "none"
+            otpbox.style.display = "block"
+        // Work with JSON data here
+        console.log(data, OTP_Global);
+        }).catch(err => {
+        // Do something for an error here
+        });
+    }
+
+
+    const textField = document.getElementById('textField');
+    const numpad = document.getElementById('numpad');
+    var enter_amount = document.getElementById("enter_amount");
+    var paybutton = document.getElementById("paybtn")
+    var amt
+    var tpin = -784512
+
+    // // Create WebSocket connection.
+    // const socket = new WebSocket("ws://192.168.29.113:8080/ws");
+
+    // // Connection opened
+    // socket.addEventListener("open", (event) => {
+    //     socket.send("Hello Server!");
+    // });
+
+    // // Listen for messages
+    // socket.addEventListener("message", (event) => {
+    //     var response = JSON.parse(event.data)
+    //     // console.log(response)
+    //     if (response["type"] == 1) {
+    //         return
+    //     }
+    //     var payload = JSON.parse(response["heartbeat"])
+    //     var amount = payload["payload"]["payment"]["entity"]["amount"]
+    //     var status = payload["payload"]["payment"]["entity"]["status"]
+    //     console.log(amount, status, amt)
+    //     if ((status == "captured" || status == "authorized") && amount == parseInt(amt)*100) {
+    //         tpin = Math.floor(Math.random() * 1000) + 1111;
+    //         console.log("payment received of amount", amount)
+    //         var qr = document.getElementById("qr");
+    //         paybutton.style.display = "none"
+    //         qr.innerHTML=`<br><h2>Payment of &#8377; `+(amount/100).toFixed(2)+` successful</h2>
+    //         <h3> Your TPIN is </h3> <h1>`+tpin+`</h1>
+    //             <h3>Connect charger to plug `+port+
+    //                 `<br><br><button type="pay" id="startcharging" onclick="startTimer()">Start Charging</button>
+    //                 <div id = "timer"></div>`
+    //         // qr.style.display = "none"
+    //     }
+    //     socket.close();
+    // });
+
+    // function updateport() {
+    //     var apiUrl = 'http://192.168.29.80:8080/update_terminal?port='+port+'&usertype=guest&tpin='+tpin
+    //     console.log(apiUrl)
+    //     fetch(apiUrl).then(response => {
+    //     return response.json();
+    //     }).then(data => {
+    //     // Work with JSON data here
+    //     // console.log(portstat)
+    //     }).catch(err => {
+    //     // Do something for an error here
+    //     });
+    // }
+
+    // Function to make UPI payment
+    function pay() {
+        amt = document.getElementById("textField").value;
+        if (!amt) {
+        alert("Please enter an amount.");
+        return;
+        }
+        var qr = document.getElementById("qr");
+        enter_amount.style.display = (enter_amount.style.display === "block") ? "none" : "block";
+        qr.style.display = (qr.style.display === "block") ? "none" : "block";
+        paybutton.innerHTML = (paybutton.innerHTML === "Proceed to Pay") ? "Modify" : "Proceed to Pay";
+        numpad.style.display = "none"
+        qr.innerHTML = `<br><img id='barcode' 
+            src="https://api.qrserver.com/v1/create-qr-code/?data=upi://pay?ver=01%26mode=19%26pa=ecopower519527.rzp@icici%26tr=RZPNqcFs6eRwgtOW3qrv2%26am=`+amt+`%26tn=terminal1%26cu=INR"
+            alt="" 
+            title="HELLO" 
+            width="200" 
+            height="200" /><br>sahebdatta@icici<br><br>
+            Scan and pay with any BHIM UPI app
+            <br><br>
+        <img src="./bhim.svg" width="150">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="./upi.svg" width="100">
+            `
+    }
+
+    function startTimer() {
+        // updateport()
+        var timer = 10;
+        var displaytimer = document.getElementById("timer")
+        var chargebtn = document.getElementById("startcharging")
+        chargebtn.disabled = true
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            // display.textContent = minutes + ":" + seconds;
+            displaytimer.innerHTML = `<h3>Charging Started!<br><br>Redirecting in `+seconds+' seconds'
+
+            if (--timer < 0) {
+                timer = 0;
+                window.location.href = "/";
+            }
+        }, 1000);
+    }
+
+    // Function to append value to input
+    function appendToInput(value, textInput) {
+        var textBox = document.getElementById(textInput);
+        textBox.value += value;
+    }
+
+    function toggleNumpad(numpadid) {
+        var numpad = document.getElementById(numpadid);
+        numpad.style.display = (numpad.style.display === "block") ? "none" : "block";
+        qr.style.display = "none"
+    }
+
+    function clearField() {
+        textField.value = '';
+    }
+
+    function removeLast(txtfield) {
+        var field = document.getElementById(txtfield);
+        field.value = field.value.slice(0, -1);
+    }
+</script>
+
+</body>
+</html>

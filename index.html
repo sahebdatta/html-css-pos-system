@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three Buttons</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        overscroll-behavior-x: none;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+        padding: 0 10px;
+    }
+
+    .button {
+        flex: 1;
+        max-width: 100%;
+        height: 95vh;
+        padding: 20px;
+        margin: 0 10px;
+        text-align: center;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .button i {
+        margin-bottom: 20px;
+    }
+
+    .button h2 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    .button h4 {
+        font-size: 1.9em;
+        margin-bottom: 0;
+    }
+
+    .button h5 {
+        font-size: 1.5em;
+        margin-bottom: 0;
+    }
+
+     /* Modal styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: clip; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto; /* 10% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%; /* Could be more or less, depending on screen size */
+        border-radius: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    /* Close button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Style for text area, input, and button inside modal */
+    .modal-content textarea,
+    .modal-content input[type="text"],
+    .modal-content button {
+        width: calc(100% - 22px); /* Adjusted width to fit within the padding */
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .modal-content textarea {
+        height: 100px;
+    }
+
+    .modal-content button {
+        width: 100%;
+        margin-top: 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .modal-content button:hover {
+        background-color: #45a049;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 40px);
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    #numpad {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    #numpad button {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        font-size: 20px;
+        border: none;
+        background-color: #6495ED;
+        color: #fff;
+        border-radius: 20%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #numpad button:hover {
+        background-color: #4169E1;
+    }
+    /* .nocursor { cursor:none; } */
+</style>
+</head>
+<body>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Guest User</h2>
+      <!-- <h4>Enter Amount</h4> -->
+      <input type="text" id="textInput" placeholder="Enter your TPIN to login" onclick="toggleNumpad()" style="width: 90%;">
+    <div id="numpad">
+        <button onclick="appendToInput('1','textInput')">1</button>
+        <button onclick="appendToInput('2','textInput')">2</button>
+        <button onclick="appendToInput('3','textInput')">3</button>
+        <br>
+        <button onclick="appendToInput('4','textInput')">4</button>
+        <button onclick="appendToInput('5','textInput')">5</button>
+        <button onclick="appendToInput('6','textInput')">6</button>
+        <br>
+        <button onclick="appendToInput('7','textInput')">7</button>
+        <button onclick="appendToInput('8','textInput')">8</button>
+        <button onclick="appendToInput('9','textInput')">9</button>
+        <br>
+        <button style="visibility:hidden;">_</button> <!-- Placeholder for spacing -->
+        <button onclick="appendToInput('0','textInput')">0</button>
+        <button onclick="removeLast()">←</button>
+        <br>
+    </div>
+    <button onclick="submit()">Submit</button>
+</div>
+  
+</div>
+
+<div id="myModal2" class="modal" style="display: 'none'">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>User Login</h2>
+      <br><br>
+      <h3>Tap your RFID card to Login</h3>
+      <br><br>
+      <!-- <h4>Enter Amount</h4> -->
+    </div>
+  
+</div>
+
+<div class="container">
+    <button class="button" onclick=selectport(1) style="background-color: #4CAF50;"> <!-- Green -->
+        <i class="fas fa-charging-station fa-3x"></i>
+        <h2>Port 1</h2>
+        <h4>AC Slow Charging</h4>
+        <h5>3.3 KW</h5>
+    </button>
+    <button class="button" onclick=selectport(2) style="background-color: #007bff;"> <!-- Blue -->
+        <i class="fas fa-charging-station fa-3x"></i>
+        <h2>Port 2</h2>
+        <h4>AC Slow Charging</h4>
+        <h5>3.3 KW</h5>
+    </button>
+    <button class="button" onclick=selectport(3) style="background-color: #ff6600;"> <!-- Orange -->
+        <i class="fas fa-charging-station fa-3x"></i>
+        <h2>Port 3</h2>
+        <h4>AC Fast Charging</h4>
+        <h5>11 KW</h5>
+    </button>
+</div>
+<script>
+    var modal = document.getElementById("myModal");
+    var modal2 = document.getElementById("myModal2")
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    var tpininput = document.getElementById("textInput");
+    var usertype
+    var tpin
+    var contact
+    var rfid
+    var portSelected
+    var userLoginTry = false
+
+    // Create WebSocket connection.
+    const socket = new WebSocket("ws://192.168.29.80:8080/ws");
+
+    // Connection opened
+    socket.addEventListener("open", (event) => {
+        socket.send("Hello Server!");
+    });
+
+    // Listen for messages
+    socket.addEventListener("message", (event) => {
+        var response = JSON.parse(event.data)
+        if (response["type"] == 1) {
+            return
+        }
+        if (response["heartbeat"]["rfid"] != "") {
+            pin = response["heartbeat"]["pin"]
+            rfidtag = response["heartbeat"]["rfid"]
+            // var payload = JSON.parse(response["heartbeat"])
+            console.log("Message ", response["heartbeat"], pin, rfidtag);
+            console.log(userLoginTry, rfidtag, rfid)
+
+            if (userLoginTry) {
+                userLoginTry = false
+                if (rfidtag == rfid) {
+                    console.log("match found")
+                    window.location.href='userpage.html?port='+portSelected
+                } else {
+                    alert("Invalid card")
+                    modal2.style.display = "none";
+                }
+            }
+
+            // var defaultdiv = document.getElementById("default");
+            // defaultdiv.style.display = 'none'
+            // var rfiddiv = document.getElementById("rfid");
+            // rfiddiv.style.display = 'block'
+        }
+    });
+
+    function selectport(port) {
+        var apiUrl = 'http://192.168.29.80:8080/select_terminal?port='+port
+        // console.log(apiUrl)
+        fetch(apiUrl).then(response => {
+        return response.json();
+        }).then(data => {
+        // Work with JSON data here
+        if (data["usertype"] == "") {
+            console.log("no user")
+            window.location.href='user_selection.html?port='+port
+        }
+        else if (data["usertype"] == "guest") {
+            console.log(data)
+            usertype = data["usertype"]
+            tpin = data["tpin"]
+            contact = data["contact"]
+            rfid = data["rfid"]
+            portSelected = port
+            openModalGuest()
+        }
+        else if (data["usertype"] == "registered") {
+            console.log(data)
+            usertype = data["usertype"]
+            tpin = data["tpin"]
+            contact = data["contact"]
+            rfid = data["rfid"]
+            portSelected = port
+            openModalRegistered()
+        }
+        // console.log(portstat)
+        }).catch(err => {
+        // Do something for an error here
+        });
+    }
+    // document.body.style.cursor = 'none';
+    function openModalGuest() {
+        tpininput.value = ""
+        modal.style.display = "block";
+    }
+
+    function openModalRegistered() {
+        modal2.style.display = "block";
+        userLoginTry = true
+    }
+
+    // Function to append value to input
+    function appendToInput(value, textInput) {
+        var textBox = document.getElementById(textInput);
+        textBox.value += value;
+    }
+
+    function removeLast() {
+        var textBox = document.getElementById("textInput");
+        textBox.value = textBox.value.slice(0, -1);
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        var numpad = document.getElementById("numpad");
+        numpad.style.display =  "none"
+        modal.style.display = "none";
+        modal2.style.display = "none";
+    }
+
+    function submit() {
+        if (tpininput.value == tpin.toString()) {
+            window.location.href='guestpage.html?port='+portSelected
+        }
+        else {
+            alert("Incorrect TPIN")
+            closeModal()
+        }
+    }
+
+    function toggleNumpad() {
+        var numpad = document.getElementById("numpad");
+        numpad.style.display = (numpad.style.display === "block") ? "none" : "block";
+    }
+</script>
+</body>
+</html>
+
+<!-- I simply added a nocursor option as follows in the file (/etc/lightdm/lightdm.conf)
+
+xserver-command = X -nocursor -->

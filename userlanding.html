@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Landing Page</title>
+<style>
+    /* General styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header styles */
+    header {
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+    }
+
+    .logout-button {
+        background-color: #f44336;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        float: right;
+    }
+
+    .logout-button:hover {
+        background-color: #d32f2f;
+    }
+
+    /* Main content styles */
+    main {
+        padding: 20px;
+    }
+
+    .welcome-text {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    /* Footer styles */
+    footer {
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Welcome to Our Website
+        <button class="logout-button" onclick="logout()">Logout</button>
+    </h1>
+</header>
+
+<main>
+    <div class="container">
+        <div class="welcome-text">
+            <h2>Welcome, User!</h2>
+            <p>This is a sample landing page for a user. You can add your content here.</p>
+        </div>
+        <div class="user-content">
+            <h3>Your Profile</h3>
+            <p>Here you can showcase information about the user's profile, such as their name, email, preferences, etc.</p>
+        </div>
+        <div class="user-actions">
+            <h3>Actions</h3>
+            <p>You can provide links or buttons for various actions like editing profile, logging out, etc.</p>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2024 - Your Company Name</p>
+</footer>
+
+<script>
+    function logout() {
+        // Perform logout actions here, such as redirecting to a logout page or clearing session data
+        alert("Logged out successfully!");
+    }
+    document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+
+</body>
+</html>

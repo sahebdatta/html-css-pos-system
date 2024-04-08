@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV Charging Station Numpad</title>
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+        /* background-color: #000000; */
+    }
+
+    .container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+        width: calc(100% - 40px);
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    #numpad {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    #numpad button {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        font-size: 20px;
+        border: none;
+        background-color: #6495ED;
+        color: #fff;
+        border-radius: 20%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    #numpad button:hover {
+        background-color: #4169E1;
+    }
+
+    .image-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button[type="pay"] {
+        background-color: #32CD32;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="pay"]:hover {
+        background-color: #228B22;
+    }
+
+    button[type="pay"]:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <!-- <header>
+        <h1>EV Charging Station Numpad</h1>
+    </header> -->
+    <!-- <form> -->
+        <h2>Using as Registered User</h2>
+        <br>
+        <h3>Login Successful</h3><br>
+        <div class="qr" id="qr">
+        </div>
+        <br>
+    <!-- </form> -->
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const port = urlParams.get('port');
+    const rfidtag = urlParams.get('rfid');
+    console.log(port, rfidtag);
+    
+    window.onload = myfunction;
+
+    function myfunction() {
+        var qr = document.getElementById("qr");
+        qr.innerHTML=`<h3>Connect charger to plug `+port+
+                    `<br><br><br><button type="pay" id="startcharging" onclick="startTimer()">Start Charging</button>
+                    <div id = "timer"></div>`
+    }
+
+    function updateport() {
+        var apiUrl = 'http://192.168.29.80:8080/update_terminal?port='+port+'&usertype=registered&rfid='+rfidtag
+        console.log(apiUrl)
+        fetch(apiUrl).then(response => {
+        return response.json();
+        }).then(data => {
+        // Work with JSON data here
+        // console.log(portstat)
+        }).catch(err => {
+        // Do something for an error here
+        });
+    }
+
+    function startTimer() {
+        updateport()
+        var timer = 5;
+        var displaytimer = document.getElementById("timer")
+        var chargebtn = document.getElementById("startcharging")
+        chargebtn.disabled = true
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            // display.textContent = minutes + ":" + seconds;
+            displaytimer.innerHTML = `<h3>Charging Started!<br><br>Redirecting in `+seconds+' seconds'
+
+            if (--timer < 0) {
+                timer = 0;
+                window.location.href = "/";
+            }
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

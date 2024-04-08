@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three Buttons</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+        padding: 0 10px;
+    }
+
+    .button {
+        flex: 1;
+        max-width: 100%;
+        height: 95vh;
+        padding: 20px;
+        margin: 0 10px;
+        text-align: center;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .button i {
+        margin-bottom: 20px;
+    }
+
+    .button h2 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    .button h4 {
+        font-size: 1.9em;
+        margin-bottom: 0;
+    }
+
+    .button h5 {
+        font-size: 1.5em;
+        margin-bottom: 0;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: clip; /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto; /* 10% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 40%; /* Could be more or less, depending on screen size */
+        border-radius: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    /* Close button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Style for text area, input, and button inside modal */
+    .modal-content textarea,
+    .modal-content input[type="text"],
+    .modal-content button {
+        width: calc(100% - 22px); /* Adjusted width to fit within the padding */
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .modal-content textarea {
+        height: 100px;
+    }
+
+    .modal-content button {
+        width: 100%;
+        margin-top: 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .modal-content button:hover {
+        background-color: #45a049;
+    }
+
+    /* Style for numpad */
+    .numpad {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .otp {display: none;}
+
+    .qr {
+        align-self: center;
+        display: none;
+        margin-top: 10px;
+    }
+
+    .numpad button {
+        width: calc(25% - 8px);
+        margin: 5px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <button class="button" style="background-color: #4CAF50;" onclick="openModal()"> <!-- Green -->
+        <i class="fas fa-solid fa-user fa-3x"></i>
+        <h2>Continue as Guest</h2>
+    </button>
+    <button class="button" style="background-color: #007bff;" onclick="openModal2()"> <!-- Blue -->
+        <i class="fas fa-solid fa-user-secret fa-3x"></i>
+        <h2>Registered User</h2>
+    </button>
+</div>
+
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('textInput')">&times;</span>
+    <h2>Using as Guest</h2>
+    <!-- <h4>Enter Amount</h4> -->
+    <div id = "enter_amount">&#8377; <input type="text" id="textInput" placeholder="Enter your Amount" onclick="toggleNumpad('numpad')" style="width: 90%;"></div>
+    <div class="numpad" id="numpad">
+        <button onclick="appendToInput('1','textInput')">1</button>
+        <button onclick="appendToInput('2','textInput')">2</button>
+        <button onclick="appendToInput('3','textInput')">3</button>
+        <button onclick="appendToInput('4','textInput')">4</button>
+        <button onclick="appendToInput('5','textInput')">5</button>
+        <button onclick="appendToInput('6','textInput')">6</button>
+        <button onclick="appendToInput('7','textInput')">7</button>
+        <button onclick="appendToInput('8','textInput')">8</button>
+        <button onclick="appendToInput('9','textInput')">9</button>
+        <button onclick="appendToInput('0','textInput')">0</button>
+    </div>
+    <div class="qr" id="qr">
+
+    </div>
+    <button onclick="pay()">PAY</button>
+  </div>
+
+</div>
+
+<!-- The Modal 2 -->
+<div id="myModal2" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('textInput1')">&times;</span>
+      <h2>User Login</h2>
+      <h4>Tap RFID or enter Mobile number</h4>
+      <div id="mobileno">
+        +91 - <input type="text" id="textInput1" placeholder="Enter your 10 digit mobile number" onclick="toggleNumpad('numpad1')" style="width: 85%;">
+        <div class="numpad" id="numpad1">
+            <button onclick="appendToInput('1','textInput1')">1</button>
+            <button onclick="appendToInput('2','textInput1')">2</button>
+            <button onclick="appendToInput('3','textInput1')">3</button>
+            <button onclick="appendToInput('4','textInput1')">4</button>
+            <button onclick="appendToInput('5','textInput1')">5</button>
+            <button onclick="appendToInput('6','textInput1')">6</button>
+            <button onclick="appendToInput('7','textInput1')">7</button>
+            <button onclick="appendToInput('8','textInput1')">8</button>
+            <button onclick="appendToInput('9','textInput1')">9</button>
+            <button onclick="appendToInput('0','textInput1')">0</button>
+        </div>
+        <button onclick="sendotp()">Send OTP</button>
+    </div>
+    <div class="otp" id="otpbox">
+        <input type="text" id="otpinput" placeholder="Enter your OTP" onclick="toggleNumpad('numpad2')" style="width: 85%;">
+        <div class="numpad" id="numpad2">
+            <button onclick="appendToInput('1','otpinput')">1</button>
+            <button onclick="appendToInput('2','otpinput')">2</button>
+            <button onclick="appendToInput('3','otpinput')">3</button>
+            <button onclick="appendToInput('4','otpinput')">4</button>
+            <button onclick="appendToInput('5','otpinput')">5</button>
+            <button onclick="appendToInput('6','otpinput')">6</button>
+            <button onclick="appendToInput('7','otpinput')">7</button>
+            <button onclick="appendToInput('8','otpinput')">8</button>
+            <button onclick="appendToInput('9','otpinput')">9</button>
+            <button onclick="appendToInput('0','otpinput')">0</button>
+        </div>
+        <button onclick="verifyotp()">Verify OTP</button>
+    </div>
+    </div>
+  
+  </div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+var modal2 = document.getElementById("myModal2");
+var qr = document.getElementById("qr");
+var enter_amount = document.getElementById("enter_amount");
+var mobileno = document.getElementById("mobileno")
+var otpbox = document.getElementById("otpbox")
+var OTP_Global = -845215
+
+// Create WebSocket connection.
+const socket = new WebSocket("ws://15.207.193.234:8080/ws");
+
+// Connection opened
+socket.addEventListener("open", (event) => {
+  socket.send("Hello Server!");
+});
+
+// Listen for messages
+socket.addEventListener("message", (event) => {
+  console.log("Message from server ", event.data);
+});
+
+// Function to open the modal
+function openModal() {
+    modal.style.display = "block";
+    enter_amount.style.display = "block"
+}
+
+function openModal2() {
+    modal2.style.display = "block";
+}
+// Function to close the modal
+function closeModal(textInput) {
+    modal.style.display = "none";
+    modal2.style.display = "none";
+    qr.style.display = "none";
+    var textBox = document.getElementById(textInput);
+    textBox.value = ""
+    mobileno.style.display = "block"
+    otpbox.style.display = "none"
+}
+
+// Function to toggle numpad visibility
+function toggleNumpad(numpadid) {
+    var numpad = document.getElementById(numpadid);
+    numpad.style.display = (numpad.style.display === "block") ? "none" : "block";
+    qr.style.display = "none"
+}
+
+// Function to append value to input
+function appendToInput(value, textInput) {
+    var textBox = document.getElementById(textInput);
+    textBox.value += value;
+}
+
+// Function to make UPI payment
+function pay() {
+    var amt = document.getElementById("textInput").value;
+    if (!amt) {
+      alert("Please enter an amount.");
+      return;
+    }
+    var numpad = document.getElementById("numpad");
+    enter_amount.style.display = (enter_amount.style.display === "block") ? "none" : "block";
+    qr.style.display = (qr.style.display === "block") ? "none" : "block";
+    numpad.style.display = "none"
+    qr.innerHTML = `<img id='barcode' 
+        src="https://api.qrserver.com/v1/create-qr-code/?data=upi://pay?ver=01%26mode=19%26pa=ecopower519527.rzp@icici%26tr=RZPNqcFs6eRwgtOW3qrv2%26am=`+amt+`%26tn=terminal1%26cu=INR"
+        alt="" 
+        title="HELLO" 
+        width="200" 
+        height="200" /><br>sahebdatta@icici<br><br>
+        Scan and pay with any BHIM UPI app
+        <br><br>
+       <img src="./bhim.svg" width="150">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="./upi.svg" width="100">
+        `
+}
+
+// Function to submit the form
+function sendotp() {
+    // Your submit logic here
+    // alert("Form submitted!");
+    var textBox = document.getElementById("textInput1");
+    number = textBox.value
+    console.log(number.length)
+    if (number.length != 10) {
+        alert("Invalid input!");
+        textBox.value = ""
+        return
+    }
+    var otp = Math.floor(Math.random() * 1000) + 1111;
+    OTP_Global = otp
+    var apiUrl = 'https://www.fast2sms.com/dev/bulkV2?authorization=V0Rdmy45OFHivWPIYazZ8xQNo21EJMlTSpKtLrnbqueX7wgfDsQeXctPdF6zKN5VR3b1viDLlxCEjUur&variables_values='+otp+'&route=otp&numbers='+number;
+    fetch(apiUrl).then(response => {
+      return response.json();
+    }).then(data => {
+        mobileno.style.display = "none"
+        otpbox.style.display = "block"
+      // Work with JSON data here
+      console.log(data, OTP_Global);
+    }).catch(err => {
+      // Do something for an error here
+    });
+}
+
+function verifyotp() {
+    var textBox = document.getElementById("otpinput");
+    number = textBox.value
+    console.log(number.length)
+    if (number.length != 4) {
+        alert("Invalid input!");
+        textBox.value = ""
+        return
+    }
+    if (number == OTP_Global) {
+        OTP_Global = -875421
+        console.log("Success!")
+        closeModal("otpinput")
+        window.location.href='userlanding.html'
+    }
+}
+
+document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+
+</body>
+</html>

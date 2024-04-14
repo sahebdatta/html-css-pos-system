@@ -138,12 +138,15 @@
     var amt
     var tpin = -784512
 
+    var SERVER_IP = "127.0.0.1"
+
     const urlParams = new URLSearchParams(window.location.search);
     const port = urlParams.get('port');
     console.log(port); 
 
     // Create WebSocket connection.
-    const socket = new WebSocket("ws://192.168.29.113:8080/ws");
+    const socket = new WebSocket("ws://15.207.193.234:8080/ws");
+    // const socket = new WebSocket("ws://127.0.0.1:8081/ws");
 
     // Connection opened
     socket.addEventListener("open", (event) => {
@@ -169,15 +172,29 @@
             qr.innerHTML=`<br><h2>Payment of &#8377; `+(amount/100).toFixed(2)+` successful</h2>
             <h3> Your TPIN is </h3> <h1>`+tpin+`</h1>
                 <h3>Connect charger to plug `+port+
-                    `<br><br><button type="pay" id="startcharging" onclick="startTimer()">Start Charging</button>
+                    `<br><br><button type="pay" id="startcharging" onclick="startTimer(`+amount+`)">Start Charging</button>
                     <div id = "timer"></div>`
             // qr.style.display = "none"
         }
         socket.close();
     });
 
+    function updatepayment(amt) {
+        var apiUrl = 'http://'+SERVER_IP+':8080/update_payment?port='+port+'&amount='+amt
+        console.log(apiUrl)
+        fetch(apiUrl).then(response => {
+        return response.json();
+        }).then(data => {
+        // Work with JSON data here
+        // console.log(portstat)
+        }).catch(err => {
+        // Do something for an error here
+        });
+    }
+
     function updateport() {
-        var apiUrl = 'http://192.168.29.80:8080/update_terminal?port='+port+'&usertype=guest&tpin='+tpin
+        // var apiUrl = 'http://192.168.29.80:8080/update_terminal?port='+port+'&usertype=guest&tpin='+tpin
+        var apiUrl = 'http://'+SERVER_IP+':8080/update_terminal?port='+port+'&usertype=guest&tpin='+tpin
         console.log(apiUrl)
         fetch(apiUrl).then(response => {
         return response.json();
@@ -213,8 +230,9 @@
             `
     }
 
-    function startTimer() {
+    function startTimer(amount) {
         updateport()
+        updatepayment(amount)
         var timer = 5;
         var displaytimer = document.getElementById("timer")
         var chargebtn = document.getElementById("startcharging")

@@ -62,13 +62,17 @@
         const urlParams = new URLSearchParams(window.location.search);
         const port = urlParams.get('port');
         console.log(port); 
+        var SERVER_IP = "127.0.0.1"
+
         document.getElementById("stopButton").addEventListener("click", function() {
             // You can add your logic here to stop charging
             alert("Charging stopped!");
         });
 
         function logout() {
-            var apiUrl = 'http://192.168.29.80:8080/logout_terminal?port='+port
+            var apiUrl = 'http://'+SERVER_IP+':8080/logout_terminal?port='+port
+            // var apiUrl = 'http://192.168.29.35:8080/logout_terminal?port='+port
+
             console.log(apiUrl)
             fetch(apiUrl).then(response => {
             return response.json();

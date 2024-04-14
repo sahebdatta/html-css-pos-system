@@ -115,6 +115,8 @@
     const port = urlParams.get('port');
     const rfidtag = urlParams.get('rfid');
     console.log(port, rfidtag);
+
+    var SERVER_IP = "127.0.0.1"
     
     window.onload = myfunction;
 
@@ -126,7 +128,9 @@
     }
 
     function updateport() {
-        var apiUrl = 'http://192.168.29.80:8080/update_terminal?port='+port+'&usertype=registered&rfid='+rfidtag
+        var apiUrl = 'http://'+SERVER_IP+':8080/update_terminal?port='+port+'&usertype=registered&rfid='+rfidtag
+        // var apiUrl = 'http://192.168.29.35:8080/update_terminal?port='+port+'&usertype=registered&rfid='+rfidtag
+
         console.log(apiUrl)
         fetch(apiUrl).then(response => {
         return response.json();

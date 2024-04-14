@@ -9,14 +9,14 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f3f3f3;
+            background-color: #333;
             color: #333;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #f3f3f3;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -47,12 +47,17 @@
     </style>
 </head>
 <body>
+    <br><br><br>
     <div class="container">
-        <h1>EV Charging Station Status</h1>
+        <h1>Charging Status <span id="chargingstatus"></span></h1>
+        <h2 id="usertype">User Type</h2>
         <div class="status">
-            <p><strong>Balance Amount Left:</strong> $50.00</p>
-            <p><strong>Unit of Electricity Consumed:</strong> 30 kWh</p>
-            <p><strong>Time of Charging:</strong> 2 hours 15 minutes</p>
+            <p><strong>Rate: </strong> &#8377; <span id="rate"></span></p>
+            <p><strong>Starting Amount: </strong> &#8377; <span id="startamt"></span></p>
+            <p><strong>Start Time: </strong><span id="starttime"></span></p>
+            <p><strong>Running Time: </strong><span id="runningtime"></span></p>
+            <p><strong>Remaining Time: </strong><span id="remainingtime"></span></p>
+            <p style="padding:10px 0px 0px 0px"><span id="graph" style="display: flex"></span></p>
         </div>
         <button class="button" id="stopButton" onclick="logout()" style="background-color: red;">Stop Charging</button>
         <button class="button" id="stopButton" onclick="home()">Home</button>
@@ -61,14 +66,90 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const port = urlParams.get('port');
+        var SERVER_IP = "127.0.0.1"
+        var starttime = ""
+        var rate = 0
+        var startamt = 0
+
         console.log(port); 
+
+        window.onload = myfunction;
+
+        String.prototype.toHHMMSS = function () {
+            var sec_num = parseInt(this, 10); // don't forget the second param
+            var hours   = Math.floor(sec_num / 3600);
+            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+            var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+            if (hours   < 10) {hours   = "0"+hours;}
+            if (minutes < 10) {minutes = "0"+minutes;}
+            if (seconds < 10) {seconds = "0"+seconds;}
+            return hours+':'+minutes+':'+seconds;
+        }
+
+        var intervalId = window.setInterval(function(){
+            if (Math.round((new Date(starttime.getTime() + startamt*3600*1000/rate) - new Date().getTime())/1000) <= 0) {
+                document.getElementById("remainingtime").innerHTML="00:00:00"
+                logout()
+                clearInterval(intervalId)
+            } else {
+                document.getElementById("remainingtime").innerHTML=((Math.round((new Date(starttime.getTime() + startamt*3600*1000/rate) - new Date().getTime())/1000)).toString()).toHHMMSS()
+            }
+            var runningtime = (Math.round((new Date().getTime()-starttime)/1000))
+            var remainingtime = (Math.round((new Date(starttime.getTime() + startamt*3600*1000/rate) - new Date().getTime())/1000))
+            var totaltime = runningtime+remainingtime
+            console.log(runningtime, totaltime)
+            document.getElementById("runningtime").innerHTML=((Math.round((new Date().getTime()-starttime)/1000)).toString()).toHHMMSS()
+            document.getElementById("graph").innerHTML=`<div style='background-color:green; width:`+runningtime+`vw'>&nbsp;</div>
+            <div style='background-color:lightgrey; width:`+remainingtime+`vw'>&nbsp;</div>`
+        }, 1000);
+
+        function myfunction() {
+            var apiUrl = 'http://'+SERVER_IP+':8080/select_terminal?port='+port
+            // console.log(apiUrl)
+            fetch(apiUrl).then(response => {
+            return response.json();
+            }).then(data => {
+                console.log(data)
+                if (data["usertype"] == "") {
+                console.log("no user")
+                window.location.href='/'
+            }
+            else {
+                document.getElementById("chargingstatus").innerHTML="| Port "+port
+                rate = data["rate"]/100
+                document.getElementById("usertype").innerHTML="User Type: "+data["usertype"]
+                startamt = (data["ChargeDetails"]["startamount"]/100).toFixed(2)
+                document.getElementById("startamt").innerHTML=startamt+"/-"
+                document.getElementById("rate").innerHTML=(data["rate"]/100).toFixed(2)+"/hr"
+                starttime = new Date(data["ChargeDetails"]["starttime"])
+                document.getElementById("starttime").innerHTML=new Date(data["ChargeDetails"]["starttime"])
+                document.getElementById("runningtime").innerHTML=((Math.round(( new Date().getTime()-starttime)/1000)).toString()).toHHMMSS()
+                console.log(starttime,new Date(starttime.getTime()+startamt*3600*1000/rate))
+                document.getElementById("remainingtime").innerHTML=((Math.round((new Date(starttime.getTime() + startamt*3600*1000/rate) - new Date().getTime())/1000)).toString()).toHHMMSS()
+            
+                var runningtime = (Math.round((new Date().getTime()-starttime)/1000))
+                var remainingtime = (Math.round((new Date(starttime.getTime() + startamt*3600*1000/rate) - new Date().getTime())/1000))
+                var totaltime = runningtime+remainingtime
+                console.log(runningtime, totaltime)
+                document.getElementById("graph").innerHTML=`<div style='background-color:green; width:`+runningtime+`vw'>&nbsp;</div>
+                <div style='background-color:lightgrey; width:`+remainingtime+`vw'>&nbsp;</div>`
+        }
+            // Work with JSON data here
+            // console.log(portstat)
+            }).catch(err => {
+            // Do something for an error here
+            });
+        }
+
         document.getElementById("stopButton").addEventListener("click", function() {
             // You can add your logic here to stop charging
             alert("Charging stopped!");
         });
 
         function logout() {
-            var apiUrl = 'http://192.168.29.80:8080/logout_terminal?port='+port
+            var apiUrl = 'http://'+SERVER_IP+':8080/logout_terminal?port='+port
+            // var apiUrl = 'http://192.168.29.35:8080/logout_terminal?port='+port
             console.log(apiUrl)
             fetch(apiUrl).then(response => {
             return response.json();

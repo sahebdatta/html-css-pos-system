@@ -242,8 +242,11 @@
     var portSelected
     var userLoginTry = false
 
+    var SERVER_IP = "127.0.0.1"
+
     // Create WebSocket connection.
-    const socket = new WebSocket("ws://192.168.29.80:8080/ws");
+    // const socket = new WebSocket("ws://192.168.29.80:8080/ws");
+    const socket = new WebSocket("ws://"+SERVER_IP+":8080/ws");
 
     // Connection opened
     socket.addEventListener("open", (event) => {
@@ -281,8 +284,23 @@
         }
     });
 
+    function callrfid() {
+        var apiUrl = 'http://'+SERVER_IP+':5000/readrfid'
+        console.log(apiUrl)
+        fetch(apiUrl).then(response => {
+        return response.json();
+        }).then(data => {
+        // Work with JSON data here
+        // console.log(portstat)
+        }).catch(err => {
+        // Do something for an error here
+        });
+    }
+
     function selectport(port) {
-        var apiUrl = 'http://192.168.29.80:8080/select_terminal?port='+port
+        // var apiUrl = 'http://192.168.29.80:8080/select_terminal?port='+port
+        var apiUrl = 'http://'+SERVER_IP+':8080/select_terminal?port='+port
+
         // console.log(apiUrl)
         fetch(apiUrl).then(response => {
         return response.json();
@@ -324,6 +342,7 @@
     function openModalRegistered() {
         modal2.style.display = "block";
         userLoginTry = true
+        callrfid()
     }
 
     // Function to append value to input
